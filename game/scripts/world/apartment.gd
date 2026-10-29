@@ -15,6 +15,8 @@ var mirror_live_material: Material
 var player_camera: Camera3D
 var materials = {}
 var low_quality = false
+var goal_marker: Label3D
+var tea_setting: Node3D
 
 func mat(key: String, color: String, roughness: float = 0.8, metallic: float = 0.0) -> StandardMaterial3D:
 	if materials.has(key):
@@ -116,6 +118,7 @@ func _ready() -> void:
 	build_furniture()
 	build_balcony()
 	build_mirror()
+	build_chapter_props()
 	navigation.bake_navigation_mesh(false)
 
 func build_lighting() -> void:
@@ -230,7 +233,7 @@ func build_furniture() -> void:
 	block("Display", Vector3(0.72, 0.42, 0.01), Vector3(0.1, 1.2, -5.36), screen, false)
 	block("MonitorStand", Vector3(0.1, 0.2, 0.1), Vector3(0.1, 0.9, -5.4), dark, false)
 	block("Keyboard", Vector3(0.6, 0.025, 0.2), Vector3(0.1, 0.84, -5.03), dark, false)
-	interactive("computer", "Computer · Tagebuch öffnen", Vector3(0.1, 1, -4.9))
+	interactive("computer", "Computer · Maras Foto / Kapitel", Vector3(0.1, 1, -4.9))
 	# Kitchen: lower cabinets, stone worktop, hob, sink, upper cabinets and fridge.
 	var cabinet = mat("cabinet", "7a8e84")
 	block("KitchenCabinets", Vector3(4.2, 0.85, 0.65), Vector3(4.2, 0.425, -5.5), cabinet)
@@ -259,7 +262,7 @@ func build_furniture() -> void:
 	block("Nightstand", Vector3(0.55, 0.56, 0.55), Vector3(-6.4, 0.28, -4.4), wood)
 	block("Wardrobe", Vector3(2, 2.5, 0.65), Vector3(-5.2, 1.25, -0.6), cabinet)
 	block("Phone", Vector3(0.09, 0.014, 0.17), Vector3(-6.4, 0.575, -4.4), dark, false)
-	interactive("phone", "Smartphone · Notizen und Erinnerungen", Vector3(-6.3, 0.9, -4.4))
+	interactive("phone", "Smartphone · Kapitel und Ziele", Vector3(-6.3, 0.9, -4.4))
 	interactive("bed", "Ausruhen · eine Stunde überspringen", Vector3(-3.8, 0.7, -3.7))
 	# Bathroom: tiled floor, shower, vanity, basin and toilet.
 	block("TileFloor", Vector3(4.8, 0.025, 5.8), Vector3(-4.5, 0.015, 3), mat("tile", "99aaa6", 0.3), false)
@@ -342,6 +345,8 @@ func build_mirror() -> void:
 	interactive("mirror", "META ME · in den Spiegel schauen", Vector3(-1.5, 1, 0.85))
 
 func apply_state(instant: bool = false) -> void:
+	if is_instance_valid(tea_setting):
+		tea_setting.visible = Chapter.state().activity == "tea" and Chapter.index() >= 4
 	lamp.visible = State.data.lamp_on
 	var angle = -PI * 0.52 if State.data.door_open else 0.0
 	if is_instance_valid(door_tween):
@@ -353,6 +358,12 @@ func apply_state(instant: bool = false) -> void:
 		door_tween.tween_property(door, "rotation:y", angle, 0.6).set_trans(Tween.TRANS_SINE)
 
 func _process(_delta: float) -> void:
+	if is_instance_valid(goal_marker):
+		goal_marker.visible = not Chapter.destination().is_empty() and player_camera != null and player_camera != get_parent().menu_camera
+		var point: Node3D = get_parent().npc if Chapter.destination() == "Mara" else null
+		for item in objects:
+			if item.get_meta("kind") == Chapter.destination(): point = item
+		if point != null: goal_marker.global_position = point.global_position + Vector3(0, 1.5, 0)
 	var hour = fmod(State.data.minutes / 60.0, 24)
 	sun.rotation_degrees.x = -maxf(4.0, sin((hour - 6) / 12 * PI) * 70)
 	sun.light_energy = maxf(0.05, sin((hour - 6) / 12 * PI)) * 1.8
@@ -368,3 +379,17 @@ func _process(_delta: float) -> void:
 			mirror_camera.look_at(p + Vector3.RIGHT, Vector3.UP)
 			var offset = mirror.position - p
 			mirror_camera.set_frustum(1.98, Vector2(offset.z, offset.y), distance + 0.02, 120)
+
+func build_chapter_props() -> void:
+	goal_marker = Label3D.new()
+	goal_marker.text = "◆"
+	goal_marker.font_size = 64
+	goal_marker.pixel_size = 0.006
+	goal_marker.modulate = Color("e9bd81")
+	goal_marker.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	add_child(goal_marker)
+	tea_setting = Node3D.new()
+	add_child(tea_setting)
+	for x in [2.2, 2.7]:
+		cylinder(0.085, 0.14, Vector3(x, 0.64, 1.65), mat("chapterCeramic", "e5d3b2"), tea_setting)
+	tea_setting.hide()

@@ -1,9 +1,9 @@
 class_name GameUI
 extends CanvasLayer
-const INK = Color("101e25")
-const MINT = Color("a8edd7")
-const TEXT = Color("edf1e9")
-const MUTED = Color("a3b5b6")
+const INK = Color("121b2a")
+const MINT = Color("e9bd81")
+const TEXT = Color("f3eee6")
+const MUTED = Color("9ba9bb")
 var game: Node
 var root: Control
 var menu: Control
@@ -25,7 +25,7 @@ var response_scroll: ScrollContainer
 var speech_scroll: ScrollContainer
 var dialogue_footer: Label
 
-func style(color: Color, border: Color = Color.TRANSPARENT, radius: int = 10, padding: int = 16) -> StyleBoxFlat:
+func style(color: Color, border: Color = Color.TRANSPARENT, radius: int = 5, padding: int = 16) -> StyleBoxFlat:
 	var box = StyleBoxFlat.new()
 	box.bg_color = color
 	box.border_color = border
@@ -50,9 +50,9 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 	b.text = text
 	b.custom_minimum_size.y = 64 if game != null and game.mobile_mode else 45
 	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	b.add_theme_stylebox_override("normal", style(MINT if primary else Color("20323a"), Color("3c5458"), 7, 12))
-	b.add_theme_stylebox_override("hover", style(Color("baf5df") if primary else Color("30494c"), MINT, 7, 12))
-	b.add_theme_stylebox_override("pressed", style(Color("76b6a5"), MINT, 7, 12))
+	b.add_theme_stylebox_override("normal", style(MINT if primary else Color("202c3f"), Color("354158"), 7, 12))
+	b.add_theme_stylebox_override("hover", style(Color("f6d6a7") if primary else Color("2e3c52"), MINT, 7, 12))
+	b.add_theme_stylebox_override("pressed", style(Color("cc9e63"), MINT, 7, 12))
 	b.add_theme_stylebox_override("focus", style(Color(0, 0, 0, 0), MINT, 7, 12))
 	b.add_theme_color_override("font_color", INK if primary else TEXT)
 	b.add_theme_color_override("font_hover_color", INK if primary else TEXT)
@@ -71,9 +71,9 @@ func vbox(parent: Node, spacing: int = 12) -> VBoxContainer:
 	parent.add_child(box)
 	return box
 
-func panel(parent: Node, color: Color = Color(0.055, 0.095, 0.12, 0.96), padding: int = 24) -> PanelContainer:
+func panel(parent: Node, color: Color = Color(0.055, 0.075, 0.12, 0.98), padding: int = 24) -> PanelContainer:
 	var p = PanelContainer.new()
-	p.add_theme_stylebox_override("panel", style(color, Color("395055"), 12, padding))
+	p.add_theme_stylebox_override("panel", style(color, Color("354158"), 5, padding))
 	parent.add_child(p)
 	return p
 
@@ -94,8 +94,8 @@ func setup(controller: Node) -> void:
 	toast_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	root.add_child(toast_label)
 	toast_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	toast_label.offset_top = 88
-	toast_label.offset_bottom = 132
+	toast_label.offset_top = 190 if game.mobile_mode else 240
+	toast_label.offset_bottom = 232 if game.mobile_mode else 282
 	toast_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	show_menu()
 
@@ -108,7 +108,7 @@ func build_hud() -> void:
 	location.position = Vector2(28, 26)
 	location.custom_minimum_size = Vector2(270, 74)
 	var top = vbox(location, 3)
-	top.add_child(label("THE BEGINNING  /  01", 15, MINT))
+	top.add_child(label("EIN BILD VON ZUHAUSE", 14, MINT))
 	time_label = label("Dein Apartment  ·  17:20", 16)
 	top.add_child(time_label)
 	var goal = panel(hud, Color(0.05, 0.10, 0.13, 0.86), 18)
@@ -116,16 +116,16 @@ func build_hud() -> void:
 	goal.offset_left = -340
 	goal.offset_right = -28
 	goal.offset_top = 26
-	goal.offset_bottom = 210
+	goal.offset_bottom = 225
 	if game.mobile_mode:
 		goal.offset_left = -460
 		goal.offset_right = -140
-		goal.offset_bottom = 150
+		goal.offset_bottom = 176
 	var goals = vbox(goal, 7)
-	goals.add_child(label("DEIN ERSTER TAG", 14, MINT))
+	goals.add_child(button("Kapitel 1  /  Dein nächster Schritt  →", show_chapter))
 	objective = label("", 15)
 	goals.add_child(objective)
-	goals.add_child(label("OFFLINE  ·  Lokale Dialogregeln", 12, MUTED))
+
 	var controls = label("WASD  Bewegen     Maus  Kamera     Shift  Sprint\nE  Interaktion     F  Gespräch     Tab  Profil     Esc  Menü", 13, TEXT)
 	if game.mobile_mode:
 		controls.text = "Links bewegen  ·  Rechts wischen"
@@ -156,55 +156,73 @@ func clear_menu() -> void:
 		menu.queue_free()
 		menu = null
 
+func diagram(parent: Node, mode: String, height: float) -> StoryDiagram:
+	var chart = StoryDiagram.new()
+	chart.mode = mode
+	chart.name = "Diagram_" + mode
+	chart.custom_minimum_size = Vector2(0, height)
+	chart.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	parent.add_child(chart)
+	return chart
+
 func show_menu() -> void:
 	clear_menu()
 	hud.hide()
 	menu = Control.new()
 	fill(menu)
 	root.add_child(menu)
-	var left = panel(menu, Color(0.035, 0.075, 0.095, 0.96), 32)
+	var shade = ColorRect.new()
+	shade.color = Color(0.025, 0.04, 0.07, 0.62)
+	fill(shade)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	menu.add_child(shade)
+	var art = StoryDiagram.new()
+	art.mode = "cover"
+	art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	art.offset_left = 400 if game.mobile_mode else 500
+	menu.add_child(art)
+	var left = panel(menu, Color(0.045, 0.065, 0.105, 0.97), 28 if game.mobile_mode else 42)
 	left.set_anchors_and_offsets_preset(Control.PRESET_LEFT_WIDE)
-	left.offset_left = 0
-	left.offset_right = 390 if game.mobile_mode else 460
+	left.offset_right = 410 if game.mobile_mode else 500
 	var scrolling = ScrollContainer.new()
 	scrolling.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	left.add_child(scrolling)
-	var column = vbox(scrolling, 10)
+	var column = vbox(scrolling, 12)
 	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	column.add_child(label("EIN LEBEN. DEINE ENTSCHEIDUNGEN.", 12, MINT))
-	var title = label("META ME" if game.mobile_mode else "META\nME", 45 if game.mobile_mode else 84)
-	title.add_theme_constant_override("line_spacing", -22)
-	column.add_child(title)
-	column.add_child(label("Wer möchtest du hier sein?", 22, MINT))
-	if not game.mobile_mode:
-		column.add_child(label("Ein neuer Ort. Ein erstes Gespräch.\nUnd ein Gegenüber, das Fragen stellt.", 15, MUTED))
-	var spacer = Control.new()
-	spacer.custom_minimum_size.y = 10
-	column.add_child(spacer)
-	var start = button("Neues Spiel beginnen   →", game.choose_new_game, true)
+	column.add_child(label("EIN INTERAKTIVES LEBEN", 12, MINT))
+	column.add_child(label("META ME", 48 if game.mobile_mode else 66))
+	column.add_child(label("Wem zeigst du, wer du bist?", 19, MUTED))
+	var line = HSeparator.new()
+	column.add_child(line)
+	var start = button("Kapitel 1 beginnen   →", game.choose_new_game, true)
 	start.name = "NewGame"
 	column.add_child(start)
-	var resume = button("Spiel fortsetzen", game.continue_game)
+	var resume = button("Deine Geschichte fortsetzen", game.continue_game)
 	resume.name = "Continue"
 	resume.disabled = not game.store.exists(game.slot)
 	column.add_child(resume)
-	column.add_child(button("Charakter erstellen", show_avatar))
-	column.add_child(button("Einstellungen", show_settings))
+	var links = HBoxContainer.new()
+	links.add_theme_constant_override("separation", 12)
+	column.add_child(links)
+	for item in [["Dein Charakter", show_avatar], ["Einstellungen", show_settings]]:
+		var link = button(item[0], item[1])
+		link.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		link.add_theme_font_size_override("font_size", 14)
+		links.add_child(link)
 	column.add_child(button("Spielstände verwalten", show_slots))
-	column.add_child(button("Beenden", func(): game.get_tree().quit()))
-	var flexible = Control.new()
-	flexible.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	column.add_child(flexible)
-	column.add_child(label("SPIELBARE ENTWICKLUNGSVERSION  /  0.2.0", 11, MUTED))
-	column.add_child(label("Spielbeobachtungen sind keine psychologische Diagnose.", 11, MUTED))
-	var caption = label("01\nTHE BEGINNING", 26)
-	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	menu.add_child(caption)
-	caption.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-	caption.offset_left = -380
-	caption.offset_right = -40
-	caption.offset_top = -125
-	caption.offset_bottom = -40
+	if not game.mobile_mode: column.add_child(button("Beenden", func(): game.get_tree().quit()))
+	column.add_child(label("ENTWICKLUNGSVERSION 0.3.0  /  OFFLINE", 11, MUTED))
+	var chapter_card = panel(menu, Color(0.045, 0.065, 0.105, 0.92), 22)
+	chapter_card.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	chapter_card.offset_left = -minf(450, root.size.x - left.offset_right - 45)
+	chapter_card.offset_right = -28
+	chapter_card.offset_top = -235 if game.mobile_mode else -285
+	chapter_card.offset_bottom = -28
+	var story = vbox(chapter_card, 10)
+	story.add_child(label("KAPITEL 1  /  THE BEGINNING", 12, MINT))
+	story.add_child(label("Ein Bild von Zuhause", 27))
+	story.add_child(label("Ein fremder Blick auf deine Wohnung. Eine Bitte. Und eine Grenze, die nur du setzen kannst.", 16, MUTED))
+	story.add_child(label("Bild prüfen  ·  Entscheiden  ·  Folgen erleben", 12, MINT))
 	start.grab_focus()
 
 func open_modal(title: String) -> VBoxContainer:
@@ -246,7 +264,8 @@ func show_pause() -> void:
 	content.add_child(button("Weiterspielen", close_modal, true))
 	content.add_child(button("Spiel speichern", func(): game.save_game()))
 	content.add_child(button("Spielstände / Laden", show_slots))
-	content.add_child(button("Profil und Beziehungen", show_profile))
+	content.add_child(button("Deine Spuren · Diagramme", show_profile))
+	content.add_child(button("Kapitel und nächster Schritt", show_chapter))
 	content.add_child(button("Wohnungsplan", show_map))
 	content.add_child(button("Tagebuch und Erinnerungen", show_memories))
 	content.add_child(button("Einstellungen", show_settings))
@@ -281,15 +300,83 @@ func show_avatar() -> void:
 		close_modal()
 		toast("Charakter übernommen."), true))
 
+func show_chapter() -> void:
+	var content = open_modal("Ein Bild von Zuhause")
+	content.add_child(label("KAPITEL 1  /  " + ("ABGESCHLOSSEN" if Chapter.index() == 5 else "DEINE GESCHICHTE"), 12, MINT))
+	diagram(content, "flow", 96)
+	var card = panel(content, Color("1b2738"), 16)
+	var col = vbox(card, 6)
+	col.add_child(label(Chapter.title(), 21))
+	col.add_child(label(Chapter.goal(), 16, MINT))
+	if not Chapter.state().choice.is_empty():
+		content.add_child(label(Chapter.consequence(), 16))
+	if Chapter.index() == 5:
+		content.add_child(label("Dein Abend: " + ("Raum für dich." if Chapter.state().activity == "solo" else "Ein gemeinsamer Tee."), 17, MINT))
+		content.add_child(label("Mara erinnert sich an deine Freigabe. Kapitel 2 ist noch nicht spielbar; dein Ausgang bleibt gespeichert.", 14, MUTED))
+	if Chapter.state().stage == "reflection":
+		content.add_child(button("Den Abend ohne Reflexion abschließen", func():
+			if Chapter.skip_reflection():
+				game.save_game(-1, true)
+				show_chapter()))
+	if not Chapter.state().choice.is_empty():
+		content.add_child(button("Deine Bildfreigabe prüfen", show_photo))
+	content.add_child(button("Entwicklungen und Entscheidungen ansehen", show_profile))
+	content.add_child(button("Ziel auf dem Wohnungsplan finden", show_map))
+	content.add_child(label("WAS BISHER GESCHAH", 13, MINT))
+	if Chapter.state().events.is_empty():
+		content.add_child(label("Mara wartet im Wohnzimmer mit einer Bitte auf dich.", 15, MUTED))
+	for event in Chapter.state().events:
+		content.add_child(label("— " + event.caption, 15))
+
+func show_photo() -> void:
+	var content = open_modal("Maras Foto  /  Deine Freigabe")
+	content.add_child(label("Hofausstellung: »Fenster, die wir nicht kennen«", 16, MINT))
+	content.add_child(label("Die markierte Kiste zeigt Name und Adresse. Noch ist nichts veröffentlicht. Prüfe den Ausschnitt, bevor du dich entscheidest.", 15))
+	var photo = diagram(content, "photo", 220)
+	photo.crop = Chapter.state().choice == "crop"
+	if Chapter.state().stage != "review":
+		content.add_child(label(Chapter.consequence(), 16, MINT))
+		return
+	var toggle = CheckButton.new()
+	toggle.text = "Sicheren Ausschnitt ansehen"
+	toggle.custom_minimum_size.y = 56
+	toggle.toggled.connect(func(value: bool): photo.crop = value; photo.queue_redraw())
+	content.add_child(toggle)
+	for pair in [["crop", "Nur Ausschnitt freigeben · Adresse bleibt privat"], ["private", "Keine Veröffentlichung erlauben"], ["share", "Original mit sichtbarer Adresse freigeben …"]]:
+		var id: String = pair[0]
+		content.add_child(button(pair[1], func():
+			if id == "share": confirm_original()
+			else: decide_photo(id), id == "crop"))
+
+func confirm_original() -> void:
+	var content = open_modal("Das Original wirklich freigeben?")
+	content.add_child(label("Auf dieser Fassung bleiben Name und Adresse erkennbar. Mara darf sie in der fiktiven Hofausstellung zeigen. Du kannst stattdessen den Ausschnitt wählen.", 16))
+	content.add_child(button("Original ausdrücklich freigeben", func(): decide_photo("share")))
+	content.add_child(button("Zur Bildprüfung zurück", show_photo, true))
+
+func decide_photo(choice: String) -> void:
+	if Chapter.choose_photo(choice):
+		game.world.apply_state()
+		game.save_game(-1, true)
+		show_chapter()
+
 func show_profile() -> void:
-	var content = open_modal("Deine Spuren im Spiel")
-	content.add_child(label("Dies beschreibt ausschließlich ausgewählte Spielhandlungen. Keine Messung deiner echten Persönlichkeit, keine Diagnose und kein Gut-Böse-Wert.", 15, MUTED))
-	content.add_child(label("MARA  /  " + EmotionManager.new().description(), 18, MINT))
-	var r = State.data.relationship
-	content.add_child(label("Vertrauen %.1f   ·   Respekt %.1f\nVertrautheit %.1f   ·   Konfliktspannung %.1f" % [r.trust, r.respect, r.familiarity, r.tension], 16))
-	for key in State.TRAITS:
-		content.add_child(label("%s   %.1f" % [key, State.data.traits[key]], 15))
-	content.add_child(label("Kleine Änderungen sind Spielsignale, keine Bewertung. Rückzug ist eine gleichwertige Entscheidung.", 13, MUTED))
+	var content = open_modal("Deine Spuren")
+	content.add_child(label("Ein Verlauf deiner Spielgeschichte. Keine Messung deiner Persönlichkeit.", 14, MUTED))
+	content.add_child(label("MARA  /  BEZIEHUNGSVERLAUF", 13, MINT))
+	content.add_child(label("Blau: Vertrauen     ·     Koralle: Konfliktspannung", 13))
+	var chart = diagram(content, "relationship", 210)
+	var evidence = label(Chapter.state().events.back().caption if not Chapter.state().events.is_empty() else "Noch keine Kapitelentscheidung.", 15, MINT)
+	content.add_child(evidence)
+	chart.event_selected.connect(func(index: int): evidence.text = Chapter.state().events[index].caption)
+	content.add_child(label("Tippe auf einen Punkt, um die zugehörige Entscheidung zu sehen. Die Linien verbinden gespeicherte Spielzustände; wenige Ereignisse ergeben noch keinen Trend.", 13, MUTED))
+	content.add_child(label("WELCHE ENTSCHEIDUNGEN HAST DU GETROFFEN?", 13, MINT))
+	diagram(content, "choices", 168)
+	content.add_child(label("Häufigkeiten der unten belegten Kapitelereignisse. Eine Grenze zu setzen ist eine gleichwertige Entscheidung.", 13, MUTED))
+	for event in Chapter.state().events:
+		var card = panel(content, Color("1b2738"), 12)
+		card.add_child(label(event.caption, 15))
+	content.add_child(button("Zum Kapitelrückblick", show_chapter))
 
 func show_memories() -> void:
 	var content = open_modal("Tagebuch & Erinnerungen")
@@ -306,13 +393,15 @@ func show_memories() -> void:
 
 func confirm_clear_memories() -> void:
 	var content = open_modal("Persönliche Einträge löschen?")
-	content.add_child(label("Entfernt Erinnerungen und Tagebuchtexte aus der aktuellen Partie sowie aus allen lesbaren Spielständen und deren Sicherungen. Positionen und Beziehungen bleiben erhalten.", 16))
+	content.add_child(label("Entfernt Tagebuchtexte, Erinnerungen und die Ereignisse der Diagramme aus der Partie sowie aus lesbaren Spielständen und Sicherungen. Kapitelstand und Beziehungen bleiben erhalten.", 16))
 	content.add_child(button("Jetzt Einträge löschen", game.clear_memories))
 
 func show_map() -> void:
-	var content = open_modal("THE BEGINNING  /  Wohnungsplan")
-	content.add_child(label("NORD\n\nSchlafzimmer    │    Küche & Arbeitsplatz\n─────────────────────────\nBad                   │    Wohnzimmer & META ME\n                         │\n                         └── Tür → Balkon", 19, MINT))
-	content.add_child(label("Alle vier Innenbereiche und der Balkon sind begehbar. Die Stadt hinter dem Balkon ist Kulisse. Weitere Viertel, Park und Spiegelwelt sind noch nicht implementiert.", 16, MUTED))
+	var content = open_modal("Dein Apartment")
+	content.add_child(label("GOLD  /  Dein aktuelles Ziel", 13, MINT))
+	diagram(content, "map", 330)
+	content.add_child(label(Chapter.goal(), 17))
+	content.add_child(label("Schematischer Wohnungsplan. Der Balkon liegt im Süden; die Stadt dahinter ist bisher Kulisse.", 13, MUTED))
 
 func show_settings() -> void:
 	var content = open_modal("Einstellungen")
@@ -374,7 +463,7 @@ func confirm_delete() -> void:
 func show_dialogue(text: String) -> void:
 	game.set_controls(false)
 	if not is_instance_valid(dialogue):
-		dialogue = panel(root, Color(0.035, 0.075, 0.095, 0.98), 16 if game.mobile_mode else 22)
+		dialogue = panel(root, Color(0.045, 0.065, 0.105, 0.99), 16 if game.mobile_mode else 22)
 		dialogue.name = "DialogueUI"
 		dialogue.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
 		dialogue.offset_left = 80
@@ -396,6 +485,7 @@ func show_dialogue(text: String) -> void:
 		var end_button = button("Beenden  ×" if game.mobile_mode else "Gespräch beenden  ×", game.end_dialogue)
 		if game.mobile_mode:
 			end_button.custom_minimum_size.y = 56
+		end_button.name = "DialogueExit"
 		head.add_child(end_button)
 		speech = label("", 17)
 		if game.mobile_mode:
@@ -439,7 +529,8 @@ func show_dialogue(text: String) -> void:
 		row.add_child(send_button)
 		dialogue_footer = label("Antworten wischen  ·  Eigene Texte möglich  ·  Lokale Dialogregeln" if game.mobile_mode else "Lokale Dialogregeln · Freitext wird vorsichtig eingeordnet; unklare Antworten werden nachgefragt.", 11, MUTED)
 		col.add_child(dialogue_footer)
-	speaker.text = ("◈  META ME  /  Freiwillige Reflexion" if game.dialog.speaker == "META ME" else "◉  MARA  /  " + EmotionManager.new().description())
+	speaker.text = "META ME  /  RÜCKBLICK" if game.dialog.speaker == "META ME" else "MARA  /  " + Chapter.title().to_upper()
+	dialogue.find_child("DialogueExit", true, false).text = "Schließen ×" if game.dialog.active else "Weiter →"
 	speech.text = text
 	free_text.clear()
 	for child in response_grid.get_children():
@@ -449,7 +540,7 @@ func show_dialogue(text: String) -> void:
 	var options = game.dialog.options()
 	for i in range(options.size()):
 		var choice: Dictionary = options[i]
-		var b = button("%d  /  %s\n%s" % [i + 1, choice.label, choice.text], func(): game.answer(choice.text, choice.intent))
+		var b = button("%s\n%s" % [choice.label.to_upper(), choice.text], func(): game.answer(choice.text, choice.intent))
 		b.name = "Response%d" % i
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -459,6 +550,9 @@ func show_dialogue(text: String) -> void:
 		b.disabled = not game.dialog.active
 		response_grid.add_child(b)
 		response_buttons.append(b)
+	response_grid.visible = game.dialog.active
+	free_text.get_parent().visible = game.dialog.active
+	dialogue_footer.text = "DEIN NÄCHSTER SCHRITT  /  " + Chapter.goal() if not game.dialog.active else "Eigene Worte oder eine konkrete Antwort wählen  ·  Offline"
 	free_text.editable = game.dialog.active
 	send_button.disabled = not game.dialog.active
 	if not response_buttons.is_empty():
@@ -482,7 +576,7 @@ func _process(delta: float) -> void:
 	toast_label.visible = toast_time > 0 if is_instance_valid(toast_label) else false
 	if is_instance_valid(time_label):
 		time_label.text = "Dein Apartment  ·  " + State.clock_text()
-		objective.text = "%s META ME am Spiegel begegnen\n%s Ein Gespräch mit Mara führen\n%s Deinen Fortschritt speichern" % ["✓" if State.data.mirror_seen else "○", "✓" if State.data.decisions > 0 else "○", "✓" if State.data.saved_once else "○"]
+		objective.text = Chapter.goal()
 	if game != null and game.mobile_mode and is_instance_valid(dialogue):
 		var physical_height = maxf(1, DisplayServer.window_get_size().y)
 		var keyboard = DisplayServer.virtual_keyboard_get_height() * root.size.y / physical_height
@@ -490,3 +584,14 @@ func _process(delta: float) -> void:
 		response_scroll.visible = keyboard <= 0
 		dialogue_footer.visible = keyboard <= 0
 		speech_scroll.custom_minimum_size.y = 40 if keyboard > 0 else 84
+
+func show_evening() -> void:
+	var shared = Chapter.state().activity == "tea"
+	var content = open_modal("Ein gemeinsamer Tee" if shared else "Ein Abend für dich")
+	content.add_child(label("ZWANZIG MINUTEN SPÄTER" if shared else "ZEHN MINUTEN SPÄTER", 12, MINT))
+	content.add_child(label("Mara stellt ihre Tasse ab. »Meine Mutter hat jahrelang aus ihrem Küchenfenster fotografiert. Immer dieselbe Straße. Auf den Bildern konnte ich später sehen, wie unser Zuhause sich verändert hat.«" if shared else "Mara hat sich verabschiedet. Die Wohnung wird still. Zum ersten Mal seit dem Umzug fühlt sich diese Ruhe wie deine eigene Entscheidung an. Mara hat deine Grenze akzeptiert; du schuldest ihr heute kein weiteres Gespräch.", 19))
+	if shared:
+		content.add_child(label("»Deshalb sammle ich Fenster. Aber für dich ist dieser Balkon keine Bildidee, sondern dein Zuhause. Danke, dass du mir gesagt hast, was davon sichtbar sein darf.«", 18, MUTED))
+	content.add_child(label(Chapter.consequence(), 16, MINT))
+	content.add_child(button("Den Abend nachklingen lassen", close_modal, true))
+	content.add_child(label("Wenn du möchtest, wartet am Spiegel der Kapitelrückblick.", 14, MUTED))

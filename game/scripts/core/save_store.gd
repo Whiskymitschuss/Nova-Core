@@ -75,6 +75,12 @@ func valid(value: Variant) -> bool:
 	for item in value.topics_seen:
 		if not item is String:
 			return false
+	if value.has("chapter") and not valid_chapter(value.chapter):
+		return false
+	if value.has("relationship_rewards"):
+		if not value.relationship_rewards is Array or value.relationship_rewards.size() > 200: return false
+		for item in value.relationship_rewards:
+			if not item is String or item.length() > 160: return false
 	return value.npc_target >= 0 and value.npc_target < 4
 
 func _number(value: Variant) -> bool:
@@ -150,3 +156,27 @@ func delete_all() -> bool:
 		if name == "local.key" or name.begins_with("slot_"):
 			ok = DirAccess.remove_absolute(root.path_join(name)) == OK and ok
 	return ok
+
+func valid_chapter(chapter: Variant) -> bool:
+	if not chapter is Dictionary: return false
+	if chapter.get("stage") not in Chapter.STAGES: return false
+	if chapter.get("choice") not in ["", "crop", "share", "private"]: return false
+	if chapter.get("approach") not in ["", "conflict"]: return false
+	if chapter.get("activity") not in ["", "solo", "tea"]: return false
+	if chapter.get("reflection") not in ["", "reflect_boundary", "reflect_connection", "reflect_repair", "reflect_skip"]: return false
+	var progress = Chapter.STAGES.find(chapter.stage)
+	if progress >= 2 and chapter.choice.is_empty(): return false
+	if progress >= 3 and chapter.activity.is_empty(): return false
+	if progress == 5 and chapter.reflection.is_empty(): return false
+	for key in ["events", "rewards"]:
+		if not chapter.get(key) is Array or chapter[key].size() > 32: return false
+	for item in chapter.rewards:
+		if not item is String or item.length() > 100: return false
+	for event in chapter.events:
+		if not event is Dictionary: return false
+		for key in ["id", "caption", "kind"]:
+			if not event.get(key) is String or event[key].length() > 500: return false
+		for key in ["minute", "trust", "tension"]:
+			if not _number(event.get(key)): return false
+		if event.trust < 0 or event.trust > 100 or event.tension < 0 or event.tension > 100: return false
+	return true

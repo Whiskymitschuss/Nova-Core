@@ -133,9 +133,9 @@ func reset() -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	draw_circle(origin, radius + 12, Color(0.04, 0.09, 0.12, 0.65))
-	draw_arc(origin, radius + 12, 0, TAU, 64, Color(0.65, 0.92, 0.84, 0.6), 2, true)
-	draw_circle(origin + stick, 30, Color(0.65, 0.92, 0.84, 0.7))
+	draw_circle(origin, radius + 12, Color(0.055, 0.075, 0.12, 0.65))
+	draw_arc(origin, radius + 12, 0, TAU, 64, Color(0.91, 0.74, 0.51, 0.55), 2, true)
+	draw_circle(origin + stick, 30, Color(0.91, 0.74, 0.51, 0.75))
 	draw_line(origin + Vector2(-12, 0), origin + Vector2(12, 0), Color("20343b"), 2)
 	draw_line(origin + Vector2(0, -12), origin + Vector2(0, 12), Color("20343b"), 2)
 
@@ -144,4 +144,4 @@ func _process(_delta: float) -> void:
 		return
 	buttons.interact.modulate.a = 1.0 if game.target != null else 0.4
 	buttons.talk.modulate.a = 1.0 if game.npc_near else 0.4
-	buttons.sprint.modulate = Color("a8edd7") if sprinting else Color.WHITE
+	buttons.sprint.modulate = Color("e9bd81") if sprinting else Color.WHITE

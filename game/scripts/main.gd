@@ -116,7 +116,7 @@ func start_new_game(index: int = 1) -> void:
 	State.data.avatar = avatar
 	slot = index
 	begin_play()
-	ui.toast(("Willkommen, %s. Links bewegen, rechts wischen. Geh zum Spiegel oder zu Mara." if mobile_mode else "Willkommen, %s. Geh zum Spiegel oder sprich Mara mit F an.") % State.data.avatar.name)
+	ui.toast(("Willkommen, %s. Links bewegen, rechts wischen. Sprich mit Mara. Sie hat eine Bitte." if mobile_mode else "Willkommen, %s. Sprich Mara mit F an. Sie hat eine Bitte.") % State.data.avatar.name)
 
 func begin_play() -> void:
 	running = true
@@ -135,7 +135,7 @@ func begin_play() -> void:
 func continue_game() -> void:
 	load_game(slot)
 
-func save_game(index: int = -1) -> bool:
+func save_game(index: int = -1, quiet: bool = false) -> bool:
 	if not running:
 		return false
 	if index == -1:
@@ -150,7 +150,7 @@ func save_game(index: int = -1) -> bool:
 		return false
 	slot = index
 	autosave = 0
-	ui.toast("Fortschritt auf Platz %d gespeichert." % slot)
+	if not quiet: ui.toast("Fortschritt auf Platz %d gespeichert." % slot)
 	return true
 
 func load_game(index: int = -1) -> bool:
@@ -203,7 +203,7 @@ func update_targets() -> void:
 		if distance < closest and can_reach(object.global_position):
 			closest = distance
 			target = object
-	npc_near = player.position.distance_to(npc.position) < 2.6 and can_reach(npc.global_position + Vector3(0, 1.3, 0))
+	npc_near = npc.visible and player.position.distance_to(npc.position) < 2.6 and can_reach(npc.global_position + Vector3(0, 1.3, 0))
 	var text = ("Benutzen  ·  " if mobile_mode else "E  ·  ") + str(target.get_meta("label")) if target != null else ""
 	if npc_near:
 		text += ("\n" if not text.is_empty() else "") + ("Reden  ·  Mit Mara sprechen" if mobile_mode else "F  ·  Mit Mara sprechen")
@@ -256,6 +256,7 @@ func handle_back() -> void:
 		ui.show_pause()
 
 func interact(kind: String) -> void:
+	var stage_before = Chapter.state().stage
 	if AudioServer.get_driver_name() != "Dummy":
 		chime.play()
 	match kind:
@@ -266,17 +267,27 @@ func interact(kind: String) -> void:
 		"lamp":
 			State.data.lamp_on = not State.data.lamp_on
 			world.apply_state()
-		"computer", "phone": ui.show_memories()
+		"computer":
+			if Chapter.state().stage == "review": ui.show_photo()
+			else: ui.show_chapter()
+		"phone": ui.show_chapter()
 		"tea":
 			State.data.minutes += 20
-			ui.toast("Du bereitest einen Tee zu. Zwanzig ruhige Minuten vergehen.")
+			if Chapter.act("tea"):
+				world.apply_state()
+				ui.show_evening()
+			else: ui.toast("Du bereitest einen Tee zu. Zwanzig ruhige Minuten vergehen.")
 		"bed":
 			State.data.minutes += 60
 			ui.toast("Du ruhst dich aus. Eine Stunde vergeht.")
 		"sofa":
 			State.data.minutes += 10
-			ui.toast("Du nimmst dir zehn Minuten ohne Verpflichtungen.")
+			if Chapter.act("sofa"):
+				world.apply_state()
+				ui.show_evening()
+			else: ui.toast("Du nimmst dir zehn Minuten ohne Verpflichtungen.")
 		"balcony": start_dialogue("META ME")
+	if Chapter.state().stage != stage_before: save_game(-1, true)
 
 func start_dialogue(who: String) -> void:
 	var opening = dialog.begin(who)
@@ -287,7 +298,10 @@ func answer(text: String, intent: String = "free") -> void:
 	if text.strip_edges().is_empty():
 		ui.toast("Schreibe eine Antwort oder wähle einen Vorschlag.")
 		return
+	var stage_before = Chapter.state().stage
 	ui.show_dialogue(dialog.answer(text, intent))
+	if Chapter.state().stage != stage_before: save_game(-1, true)
+	world.apply_state()
 	npc.talking = dialog.speaker == "Mara" and dialog.active
 
 func end_dialogue() -> void:
@@ -297,6 +311,7 @@ func end_dialogue() -> void:
 func clear_memories() -> void:
 	State.data.memories.clear()
 	State.data.journal.clear()
+	State.data.chapter.events.clear()
 	var errors = 0
 	for index in range(1, 4):
 		if not store.exists(index):
@@ -307,6 +322,7 @@ func clear_memories() -> void:
 			continue
 		value.memories = []
 		value.journal = []
+		if value.has("chapter"): value.chapter.events = []
 		if not store.save_game(index, value):
 			errors += 1
 		else:

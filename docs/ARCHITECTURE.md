@@ -5,6 +5,8 @@
 | Bereich | Verantwortung |
 |---|---|
 | `core/state.gd` · Autoload `State` | Versionierter Welt-/Avatar-/NPC-/Beziehungszustand, Zeit und Spielbeobachtungen |
+| `core/chapter.gd` | Explizite Kapitelzustände, dauerhafte Entscheidungen, endliche Dialoge, nachvollziehbare Ereignisschnappschüsse und einmalige Folgen |
+| `ui/story_diagram.gd` | Auflösungsunabhängige Kapitel-, Plan-, Beziehungs- und Häufigkeitsdiagramme; antippbare Beziehungspunkte aus realen gespeicherten Ereignissen |
 | `core/save_store.gd` | Formatprüfung, AES-verschlüsselte Dateien über Godot FileAccess, atomarer Austausch, Backup und Löschung |
 | `world/apartment.gd` | Eigene Geometrie, Materialien, Licht, NavMesh, Interaktionspunkte und Spiegel-Viewport |
 | `world/player.gd` | CharacterBody3D, Beschleunigung/Gravitation, physische Kollisionen, SpringArm-Kamera und Schritte |
@@ -39,3 +41,11 @@ Die Raumgeometrie und Charaktere sind originale prozedurale Ressourcen. Die Klan
 ## Android ab 0.2.0
 
 `main.gd` erkennt Android oder den Desktop-Testschalter `--touch`, skaliert die UI und verarbeitet Android-Zurück sowie `NOTIFICATION_APPLICATION_PAUSED`. `MetaPlayer` kombiniert analogen Touch-Eingang mit der bestehenden Physiksteuerung. `GameUI` stellt auf scrollbare Touch-Menüs und einen höhenangepassten Dialog um; bei sichtbarer Bildschirmtastatur bleibt die Freitextzeile zugänglich. Das gleiche Spiel läuft als native Godot-APK mit OpenGL ES 3.0. Der Export nutzt offizielle vorkompilierte Vorlagen, keine WebView und keinen Remote-Streaming-Dienst.
+
+## Kapitel 1 ab 0.3.0
+
+Die produktiven Gespräche verwenden den Handlungsbogen in `Chapter`. Der generische Situationsgenerator bleibt als getestete Grundlage erhalten. Explizite Auswahl-IDs und bekannte Formulierungen lösen Übergänge aus; unbekannter Freitext bleibt ohne Freigabe oder erfundene psychologische Interpretation. Kapitelantworten enden nach einer Vereinbarung. Vorwürfe, Beleidigungen und Grenzen haben erkennbare Folgen; wiederholtes Öffnen erzeugt keine positiven Ereignisbelohnungen.
+
+Jedes Kapitelereignis speichert seine Kategorie, Beschreibung, Spielzeit und die tatsächlichen Beziehungswerte danach. Diagramme lesen ausschließlich diese Schnappschüsse; sie verwenden keine Demodaten und interpretieren keine Eigenschaftszähler als Persönlichkeitsmessung. Die X-Achse folgt der Ereignisreihenfolge, nicht der verstrichenen Zeit. Die Löschung persönlicher Einträge entfernt auch diese Historie aus Hauptdateien und Sicherungen; Kapitelentscheidungen und bereits entstandene Beziehungen bleiben als Spielfortschritt erhalten.
+
+Kapitelzustand ist eine validierte optionale Erweiterung von Saveformat 1. Alte 0.2-Spielstände erhalten beim Wiederherstellen den anfänglichen Kapitelzustand. Das vorhandene Avatar-, Welt- und Beziehungsergebnis bleibt erhalten. Kapitelübergänge und Bildentscheidungen lösen Autosaves aus. Die APK behält Paket-ID und Entwicklungsschlüssel bei und erhöht den Android-Versioncode auf 3.

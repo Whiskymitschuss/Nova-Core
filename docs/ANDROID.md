@@ -1,10 +1,10 @@
-# META ME 0.2.0 · Android
+# META ME 0.3.0 · Android
 
 ## Direkt installieren
 
 1. `builds/META_ME_Android.apk` auf das Gerät übertragen und in der Dateien-App öffnen.
 2. Falls Android fragt, der verwendeten Dateien-/Browser-App die Installation unbekannter Apps erlauben.
-3. META ME öffnen und „Neues Spiel beginnen“ antippen. Im Hauptmenü bei Bedarf nach oben wischen, um die unteren Einträge zu sehen.
+3. META ME öffnen und „Kapitel 1 beginnen“ antippen und mit Mara sprechen. Der goldene Marker und das Kapitelmenü zeigen den nächsten Schritt.
 
 Alternativ mit USB-Debugging und Android-SDK:
 
@@ -37,7 +37,7 @@ Mehrere Finger besitzen unabhängige Aufgaben: Der linke Daumen kann die Figur b
 - Querformat, skalierbare Touch-Oberfläche und Berücksichtigung der Display-Sicherheitsränder bei den Touch-Steuerungen.
 - Standardmäßig keine dynamischen Schatten und kein Echtzeit-Spiegelrendering. Die Spiegelinteraktion bleibt erhalten; hohe Qualität ist optional.
 - 3D-Auflösung auf mobilen Geräten auf 75 % skaliert, Oberfläche bleibt separat skaliert. Mobile Licht-/Shaderpuffer sind für kleinere GLES-Grenzen reduziert.
-- Speichern und Pause beim Wechsel in den Hintergrund. Der Android-Prozess kann später ohne Schlussbenachrichtigung beendet werden.
+- Autosave bei Kapitelübergängen sowie Speichern und Pause beim Wechsel in den Hintergrund. Der Android-Prozess kann später ohne Schlussbenachrichtigung beendet werden.
 - Private App-Dateien, deaktiviertes Android-Cloud-Backup. Keine Internet-, Mikrofon- oder gemeinsamen Speicherberechtigungen erforderlich.
 - Kein Online-KI-Dienst und keine extern übertragenen Gespräche.
 

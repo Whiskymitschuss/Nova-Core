@@ -20,6 +20,7 @@ func reset() -> void:
 		"emotions": {"joy": 0.2, "anger": 0.0, "disappointment": 0.0, "hope": 0.4},
 		"memories": [], "journal": [], "decisions": 0, "conversations": 0, "mirror_seen": false,
 		"lamp_on": true, "door_open": false, "saved_once": false, "topics_seen": [], "boundary_until": 0.0,
+		"chapter": Chapter.DEFAULT.duplicate(true), "relationship_rewards": [],
 		"npc_position": [4.3, 0.06, 0.85], "npc_target": 0, "remember_text": remember_text}
 	changed.emit()
 
@@ -38,6 +39,10 @@ func snapshot() -> Dictionary:
 
 func restore(value: Dictionary) -> void:
 	data = value.duplicate(true)
+	if not data.has("chapter"):
+		data.chapter = Chapter.DEFAULT.duplicate(true)
+	if not data.has("relationship_rewards"):
+		data.relationship_rewards = []
 	remember_text = data.get("remember_text", false)
 	changed.emit()
 

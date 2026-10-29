@@ -1,6 +1,20 @@
-# META ME · Entwicklungsstand 0.2.0
+# META ME · Entwicklungsstand 0.3.0
 
-Der erste konkrete Meilenstein aus dem Masterprompt ist umgesetzt. Dies ist **kein vollständiger Release aller acht Phasen**. Die vorhandenen Systeme bilden ein zusammenhängendes Spiel; nachfolgende Großsysteme werden nicht als fertig bezeichnet.
+Das technische Fundament ist spielbar; Kapitel 1 hat ab 0.3.0 einen ausgearbeiteten Handlungsbogen. Dies ist **kein vollständiger Release aller acht Phasen**. Die folgenden Häkchen bezeichnen jeweils die konkrete Teilfunktion, keine Produktionsreife einer ganzen Phase.
+
+## Aktueller Ausbau · Kapitel 1 „Ein Bild von Zuhause“
+
+Dieser Ausbau verbindet Phase 3/4 (NPC und zielgerichtete Gespräche), Phase 5 (dauerhafte Folgen), Phase 6 (nachvollziehbarer Rückblick) und Phase 8 (mobile UX). Neue Weltgebiete bleiben offen.
+
+- [x] Endliche Handlung: Einladung → Bildprüfung oder Ablehnung → Vereinbarung → Aktivität in der Welt → optionaler Rückblick → Abschluss.
+- [x] Drei dauerhafte Bildausgänge: sicherer Ausschnitt, ausdrücklich bestätigtes Original oder keine Veröffentlichung.
+- [x] Gemeinsamer Tee mit erzähltem Hintergrund, eigenständiger Rückzug und Versöhnungsversuch nach Vorwurf.
+- [x] Aktuelles Ziel, Marker im Apartment, grafischer Wohnungsplan und Kapitelpfad.
+- [x] Beziehungsdiagramm mit antippbaren Entscheidungspunkten und belegten Ereignissen; Häufigkeitsdiagramm statt unkommentierter Persönlichkeitswerte.
+- [x] Persistente Kapitelentscheidungen, Autosave bei Fortschritt, Laden mitten im Kapitel, Kompatibilität mit 0.2-Spielständen.
+- [x] Überarbeitete Menüs und Dialoge für Android; Ende eines Gesprächs führt zu einem konkreten nächsten Schritt.
+- [ ] Externe Spieltests für Dramaturgie, Umfang, Lesbarkeit und Bedienung auf mehreren echten Android-Geräten.
+- [ ] Kapitel 2 und spätere Weltgebiete; der Abschluss kündigt keine bereits spielbare Fortsetzung an.
 
 ## Phase 1 · Technisches Fundament
 
@@ -47,12 +61,13 @@ Der erste konkrete Meilenstein aus dem Masterprompt ist umgesetzt. Dies ist **ke
 - [x] Konfliktantworten, Abbruchgrenze und zeitlicher Abstand, keine automatische Vergebung.
 - [x] Wiederholte identische Antworten erzeugen innerhalb eines Gesprächs keine weiteren Vertrauenspunkte.
 - [ ] Alle 13 Emotionen, mehrere Beziehungspartner und langfristige Beziehungsereignisse.
-- [ ] Langfristige Vertrauensentwicklung gegen Optimieren durch wiederholtes Neueröffnen absichern.
+- [x] Kapitelbelohnungen einmal pro Ereignis; generische Dialogbelohnungen pro Spieltag/Thema/Absicht begrenzt, auch über erneutes Öffnen hinweg.
+- [ ] Langfristiges Beziehungsbalancing über mehrere Spieltage und mehrere NPCs.
 
 ## Phase 6 · META ME
 
 - [x] Reaktiver Spiegel mit Echtzeitreflexion und freiwilligem Reflexionsgespräch.
-- [x] Dashboard für zehn Spielbeobachtungen mit klarer Nicht-Diagnose-Erklärung.
+- [x] Ereignisbasierter Beziehungsverlauf und Entscheidungsdiagramme mit klarer Nicht-Diagnose-Erklärung. Interne zehn Eigenschaftszähler werden nicht als vermeintliches Persönlichkeitsprofil angezeigt.
 - [x] Lokales Journal mit ausdrücklicher Aufbewahrungsoption und Datenlöschung.
 - [ ] Kontextreiche Rückblicke auf mehrere Spieltage und frei betretbare MIRROR WORLD.
 - [ ] Bessere Interpretation langfristiger Entscheidungen ohne reale Persönlichkeitsbehauptungen.

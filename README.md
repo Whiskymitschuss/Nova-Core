@@ -1,10 +1,20 @@
 # Nova-Core · META ME
 
-Dieses Repository enthält **META ME 0.2.0 / THE BEGINNING**, einen spielbaren Android-Meilenstein in Godot 4.7.2 mit GDScript. Die ursprüngliche Repository-Beschreibung lautete: „A Discord Community Channel with some Self produced Scripts/Addons“.
+Dieses Repository enthält **META ME 0.3.0 / Ein Bild von Zuhause**, einen spielbaren Android-Meilenstein in Godot 4.7.2 mit GDScript. Die ursprüngliche Repository-Beschreibung lautete: „A Discord Community Channel with some Self produced Scripts/Addons“.
+
+## Kapitel 1
+
+Mara möchte ein Foto deines Balkons ausstellen. Darauf steht deine Adresse. Prüfe das Bild am Küchencomputer und entscheide zwischen sicherem Ausschnitt, bestätigtem Original und keiner Veröffentlichung. Verabredet einen Tee oder einen Abend allein, löse die Vereinbarung in der Wohnung ein und schließe den Abend mit oder ohne Spiegelrückblick ab. Mara erinnert sich anschließend an deine Freigabe.
+
+Das Kapitelmenü zeigt immer den nächsten Schritt. Der Wohnungsplan und ein goldener Marker helfen beim Finden. „Deine Spuren“ zeigt den Beziehungsverlauf mit antippbaren Entscheidungspunkten sowie belegte Ereignisse statt einzelner Persönlichkeitszahlen. Fortschritt wird an Kapitelübergängen gespeichert; frühere Spielstände bleiben ladbar und beginnen den neuen Handlungsbogen mit ihren vorhandenen Beziehungen.
+
+Kapitel 2, weitere Viertel und die übrigen offenen Roadmap-Punkte sind noch nicht spielbar.
+
+Oberfläche aus dem laufenden Spiel: [Menü](docs/screenshots/menu.png) · [Kapitelabschluss](docs/screenshots/chapter.png) · [Beziehungsdiagramm](docs/screenshots/diagrams.png).
 
 ## Android
 
-**[Android-APK direkt herunterladen](https://github.com/Whiskymitschuss/Nova-Core/raw/refs/heads/codex/meta-me-android-v0.2.0/downloads/META_ME_Android.apk)**
+**[Android-APK direkt herunterladen](https://github.com/Whiskymitschuss/Nova-Core/raw/refs/heads/codex/meta-me-android-v0.2.0/downloads/META_ME_Android.apk?v=0.3.0)**
 
 Die geprüfte Testversion liegt im Repository unter [`downloads/META_ME_Android.apk`](downloads/META_ME_Android.apk). [Installation und Prüfsumme](downloads/README.md).
 
@@ -20,7 +30,7 @@ Build, Installation und Android-Prüfung: [docs/ANDROID.md](docs/ANDROID.md).
 
 `builds/META_ME_Windows_x64.zip` vollständig entpacken und `META_ME.exe` starten. `META_ME.pck` muss danebenliegen. Windows 10/11 x64 mit OpenGL-3.3-fähiger Grafik; keine Internetverbindung und kein API-Schlüssel erforderlich. Die Entwicklungsversion ist unsigniert und enthält keinen Installer. Ein Linux-x64-Build und das vollständige Quellprojekt werden ebenfalls erzeugt.
 
-Im Spiel: **Neues Spiel** wählen, das Apartment erkunden, links im Wohnzimmer am Spiegel mit **E** META ME begegnen, mit **F** Mara ansprechen und mit **F5** speichern. Sechs situationsabhängige Gesprächseinstiege, wechselnde Antwortvorschläge und eigene Texteingaben sind integriert. Beziehungen reagieren auf Spielentscheidungen; Konflikte verschwinden nicht durch eine einzelne Entschuldigung.
+Im Spiel: **Kapitel 1 beginnen** wählen und Mara im Wohnzimmer mit **F** ansprechen. Ziele, Bildprüfung und Aktivitäten führen durch den Abend. Eigene Texteingaben sind möglich; unbekannte Formulierungen entscheiden nichts automatisch. Beziehungen reagieren auf Spielentscheidungen; Konflikte verschwinden nicht durch eine einzelne Entschuldigung.
 
 | Taste | Funktion |
 |---|---|
@@ -62,6 +72,6 @@ Das Offline-System kombiniert Regeln, Situationen und Textvarianten. Es ist **ke
 
 Spielwerte beschreiben ausschließlich beobachtete Spielentscheidungen, keine echte Persönlichkeit und keine Diagnose. Reflexion ist freiwillig. Zurückhaltung wird nicht als moralischer Mangel gewertet. Drei verschlüsselte Speicherplätze mit atomarem Dateiaustausch, letzter gültiger Sicherung und Formatprüfung sind integriert. Automatisches Speichern erfolgt nach 120 Sekunden aktiven Spiels; normales Schließen des Fensters und „Speichern und zum Hauptmenü“ speichern ebenfalls.
 
-Speicherort: Android im privaten App-Speicher, Windows `%APPDATA%\META_ME`, Linux `$XDG_DATA_HOME/META_ME` bzw. `~/.local/share/META_ME`. Texteingaben werden standardmäßig nicht aufbewahrt; ihre Speicherung kann in den Einstellungen aktiviert werden. Im Tagebuch lassen sich persönliche Einträge aus lesbaren Speicherständen **und Sicherungen** entfernen; die Spielstandverwaltung kann sämtliche Speicherdateien inklusive Schlüssel löschen. Der lokale Verschlüsselungsschlüssel liegt im selben Benutzerkonto: kein Schutz gegen Kontozugriff, Malware, externe Backups oder Datenträgerforensik. Die Löschfunktion ist keine sichere physische Datenträgerlöschung.
+Speicherort: Android im privaten App-Speicher, Windows `%APPDATA%\META_ME`, Linux `$XDG_DATA_HOME/META_ME` bzw. `~/.local/share/META_ME`. Texteingaben werden standardmäßig nicht aufbewahrt; ihre Speicherung kann in den Einstellungen aktiviert werden. Im Tagebuch lassen sich persönliche Einträge einschließlich der Diagrammereignisse aus lesbaren Speicherständen **und Sicherungen** entfernen; die Spielstandverwaltung kann sämtliche Speicherdateien inklusive Schlüssel löschen. Der lokale Verschlüsselungsschlüssel liegt im selben Benutzerkonto: kein Schutz gegen Kontozugriff, Malware, externe Backups oder Datenträgerforensik. Die Löschfunktion ist keine sichere physische Datenträgerlöschung.
 
 Weiterentwicklung, Phasenstatus und bekannte Grenzen: [docs/ROADMAP.md](docs/ROADMAP.md). Architektur: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Prüfprotokoll: [docs/VALIDATION.md](docs/VALIDATION.md). Der vollständige Auftrag bleibt in [docs/MASTER_PROMPT.md](docs/MASTER_PROMPT.md) erhalten.

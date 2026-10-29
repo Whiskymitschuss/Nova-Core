@@ -13,6 +13,7 @@ var turn = 0
 var rewarded = 0
 var opening_text = ""
 var seen_intents: Array = []
+var chapter_mode = true
 
 func begin(who: String, location: String = "Apartment") -> String:
 	speaker = who
@@ -23,6 +24,12 @@ func begin(who: String, location: String = "Apartment") -> String:
 		active = false
 		return "Ich brauche gerade Abstand. Bitte lass uns später weiterreden."
 	active = true
+	if chapter_mode:
+		if speaker == "META ME": State.data.mirror_seen = true
+		else: State.data.conversations += 1
+		topic = "chapter"
+		opening_text = Chapter.opening(speaker)
+		return opening_text
 	if speaker == "META ME":
 		topic = "mirror"
 		State.data.mirror_seen = true
@@ -44,7 +51,7 @@ func begin(who: String, location: String = "Apartment") -> String:
 	return opening_text
 
 func options() -> Array:
-	return responses.generate(topic, turn)
+	return Chapter.options(speaker, turn) if chapter_mode else responses.generate(topic, turn)
 
 func answer(text: String, intent: String = "free") -> String:
 	if not active:
@@ -52,6 +59,22 @@ func answer(text: String, intent: String = "free") -> String:
 	text = text.strip_edges().left(500)
 	if text.is_empty():
 		return "Nimm dir ruhig einen Moment."
+	if chapter_mode:
+		if speaker == "Mara" and intent == "free" and responses.classify(text) == "confrontational":
+			relationships.apply("confrontational", false)
+			emotions.react("confrontational")
+			turn += 1
+			if State.data.relationship.tension >= 20:
+				State.data.boundary_until = State.data.minutes + 12
+				active = false
+				Chapter.record("insult_boundary", "Mara beendet das Gespräch nach wiederholten Beleidigungen.", "conflict")
+				return "Ich beende das Gespräch jetzt. Nach diesen Beleidigungen brauche ich Abstand. Wir können später über das Foto weiterreden."
+			Chapter.record("insult", "Du beleidigst Mara. Sie verlangt einen respektvollen Umgang.", "conflict")
+			return "So möchte ich nicht angesprochen werden. Wir können über das Foto sprechen, wenn wir respektvoll bleiben."
+		var result = Chapter.respond(speaker, text, intent, turn)
+		turn += 1
+		active = not result.done
+		return result.text
 	if intent == "free":
 		intent = responses.classify(text)
 	if speaker == "META ME":
@@ -62,7 +85,11 @@ func answer(text: String, intent: String = "free") -> String:
 				State.data.journal.pop_front()
 		turn += 1
 		return "Danke, dass du dir den Moment nimmst. Nur du kannst sagen, was deine Antwort für dich bedeutet. Du kannst deine Einträge im Tagebuch ansehen oder löschen. Möchtest du noch etwas ergänzen?"
-	var allow_growth = rewarded < 3 and not seen_intents.has(intent) and turn < 8
+	var reward_key = "%d:%s:%s" % [int(State.data.minutes / 1440), topic, intent]
+	var allow_growth = rewarded < 3 and not seen_intents.has(intent) and turn < 8 and not State.data.relationship_rewards.has(reward_key)
+	if allow_growth:
+		State.data.relationship_rewards.append(reward_key)
+		if State.data.relationship_rewards.size() > 200: State.data.relationship_rewards.pop_front()
 	relationships.apply(intent, allow_growth)
 	emotions.react(intent)
 	if allow_growth:

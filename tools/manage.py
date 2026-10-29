@@ -20,7 +20,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 GAME = ROOT / "game"
 OUT = ROOT / "builds"
-VERSION = "0.2.0"
+VERSION = "0.3.0"
 ENGINE = "4.7.2"
 
 
@@ -86,7 +86,7 @@ def android_package(binary: str) -> Path:
                             check=True, capture_output=True, text=True, timeout=60)
     (OUT / "android-signature.log").write_text(signed.stdout + signed.stderr, encoding="utf-8")
     (OUT / "ANDROID-INSTALLATION.txt").write_text(
-        "META ME 0.2.0 — Android-Testversion\n\n"
+        "META ME 0.3.0 — Android-Testversion\n\n"
         "META_ME_Android.apk auf das Gerät übertragen und dort öffnen.\n"
         "Für die verwendete Dateien-/Browser-App die Installation unbekannter Apps erlauben.\n"
         "Alternativ über das Android-SDK: adb install -r META_ME_Android.apk\n"
@@ -124,7 +124,7 @@ def package(binary: str, target: str) -> Path:
         executable.chmod(0o755)
         run(str(executable), ["--headless", "--quit-after", "60"], "linux-export-smoke.log", exported=True)
     (folder / "README.txt").write_text(
-        "META ME 0.2.0 — THE BEGINNING\n\n"
+        "META ME 0.3.0 — THE BEGINNING\n\n"
         "Den gesamten ZIP-Inhalt entpacken. " + executable.name + " starten.\n"
         "EXE/Binary und META_ME.pck im selben Ordner behalten.\n"
         "Windows 10/11 x64, OpenGL 3.3-kompatible Grafik. Kein Internet nötig.\n"

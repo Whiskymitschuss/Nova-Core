@@ -1,5 +1,16 @@
 # Prüfprotokoll · META ME
 
+## Kapitel- und UI-Ausbau 0.3.0
+
+- **128 Desktopprüfungen und 141 Touchprüfungen: jeweils 0 Fehler. Grafischer Touchlauf: 147 Prüfungen einschließlich 6 Screenshots, 0 Fehler.** Das sind überlappende Prüfungen der beiden Steuerungsmodi, keine addierten unabhängigen Tests.
+- Automatisierte Desktop-/Touch-Tests laden die echte Szene, keine nachgebaute Dialogsimulation. Alle drei Bildausgänge, gemeinsamer Tee, Rückzug und Versöhnungsversuch werden bis zu einem Abschluss durchgespielt.
+- Geprüft: unbekannter Freitext erteilt keine Veröffentlichungserlaubnis; Originalfreigabe hat einen zweiten Bestätigungsschritt; erneutes Öffnen setzt Entscheidungen nicht zurück und erzeugt kein zusätzliches Vertrauen.
+- Weltaktionen müssen zur Vereinbarung passen. Tee erzeugt eine sichtbare Tischsituation; beim Solo-Abend verlässt Mara tatsächlich die Wohnung und ihre Kollision wird abgeschaltet. Die Spiegelreflexion kann ausgelassen werden.
+- Ereignispunkte im Beziehungsdiagramm sind auswählbar und zeigen die jeweilige gespeicherte Entscheidung. Die Graphen verwenden ausschließlich gespeicherte Ereignisschnappschüsse; keine Beispieldaten oder erfundenen Messungen.
+- Speichern/Laden mit Kapitelstatus und Bildentscheidung, Migration alter 0.2-Spielstände und Ablehnung beschädigter Kapitel-/Diagrammdaten sind geprüft.
+- Native Android-7-Emulatorprüfung des finalen APKs: Update über die vorhandene Installation erfolgreich, Signatur stimmt mit der 0.2.0-APK überein, installiertes Paket meldet Version 0.3.0 / Code 3 / minSdk 24 / targetSdk 36; Hauptmenü sichtbar, begrenztes Laufzeitlog ohne Godot-/Skriptfehler. Kein physischer Android-Gerätetest.
+- PNG-Startbildschirm ersetzt die Engine-Standardgrafik; Android-Code 3, Version 0.3.0. Paket-ID und vorhandener Entwicklungsschlüssel bleiben erhalten.
+
 ## Android-Meilenstein 0.2.0
 
 - Godot 4.7.2; OpenJDK 17.0.21; Android-SDK Build Tools 36.0.0.
