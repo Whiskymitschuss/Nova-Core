@@ -1,0 +1,6 @@
+game/.godot/
+builds/*
+!builds/.gitkeep
+__pycache__/
+*.pyc
+.DS_Store
