@@ -1,0 +1,8 @@
+{
+  "checks": 87399,
+  "engine": "4.7.2-stable (official)",
+  "failures": 0,
+  "levels": 100,
+  "max_solution_moves": 16,
+  "solver_moves": 626
+}

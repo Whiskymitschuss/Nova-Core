@@ -1,0 +1,14 @@
+{
+  "file": "RoyalRescue3D-1.1.0.apk",
+  "bytes": 32067783,
+  "sha256": "c1e616ba69845ab57059da340ee2005c751633d8109bdf872b762872aa4a1d56",
+  "zip_crc_valid": true,
+  "abi": "arm64-v8a",
+  "native_elf_machine": 183,
+  "native_load_alignment_bytes": 16384,
+  "portrait": true,
+  "internet_permission": false,
+  "signature_verified": true,
+  "zip_alignment_verified": true,
+  "android_device_tested": false
+}
